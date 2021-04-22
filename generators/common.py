@@ -199,8 +199,9 @@ class Generator(keras.utils.Sequence):
 
             # delete invalid indices
             if len(small_indices):
-                for k in annotations_group[index].keys():
-                    annotations_group[index][k] = np.delete(annotations[k], small_indices, axis=0)
+                pass
+                #for k in annotations_group[index].keys():
+                #    annotations_group[index][k] = np.delete(annotations[k], small_indices, axis=0)
                 # import cv2
                 # for invalid_index in small_indices:
                 #     x1, y1, x2, y2 = annotations['bboxes'][invalid_index]
