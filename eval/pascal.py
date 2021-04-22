@@ -35,7 +35,8 @@ class Evaluate(keras.callbacks.Callback):
         save_path=None,
         tensorboard=None,
         weighted_average=False,
-        verbose=1
+        verbose=1,
+        prefix=''
     ):
         """
         Evaluate a given dataset using a given model at the end of every epoch during training.
@@ -94,12 +95,12 @@ class Evaluate(keras.callbacks.Callback):
                 summary = tf.Summary()
                 summary_value = summary.value.add()
                 summary_value.simple_value = self.mean_ap
-                summary_value.tag = "mAP"
+                summary_value.tag = prefix + "mAP"
                 self.tensorboard.writer.add_summary(summary, epoch)
             else:
-                tf.summary.scalar('mAP', self.mean_ap, epoch)
+                tf.summary.scalar(prefix + 'mAP', self.mean_ap, epoch)
 
-        logs['mAP'] = self.mean_ap
+        logs[prefix + 'mAP'] = self.mean_ap
 
         if self.verbose == 1:
-            print('mAP: {:.4f}'.format(self.mean_ap))
+            print(prefix + 'mAP: {:.4f}'.format(self.mean_ap))
