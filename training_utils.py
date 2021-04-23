@@ -142,7 +142,7 @@ def load_efficient_det(
     evaluation_path = f'{LOCAL_ROOT_PATH}/evaluation.csv'
     evaluation_df.to_csv(evaluation_path, index=False, header=None)
 
-    config['steps_per_epoch'] = 3#annotations_df.iloc[:,0].nunique()/config['batch_size'] TODO
+    config['steps_per_epoch'] = annotations_df.iloc[:,0].nunique()/config['batch_size']
 
     train_generator = CSVGenerator(
                 LOCAL_ANNOTATIONS_PATH,
