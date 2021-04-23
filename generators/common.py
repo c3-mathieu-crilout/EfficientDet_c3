@@ -157,8 +157,8 @@ class Generator(keras.utils.Sequence):
                 (annotations['bboxes'][:, 3] > image.shape[0])
             )[0]
 
-            # delete invalid indices
-            if len(invalid_indices):
+            # delete invalid indices # TODO BUG NOT FIXED
+            if False and len(invalid_indices):
                 warnings.warn('Image with id {} (shape {}) contains the following invalid boxes: {}.'.format(
                     group[index],
                     image.shape,
