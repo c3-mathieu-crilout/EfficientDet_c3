@@ -20,7 +20,6 @@ def diff(start, end):
     t_diff = relativedelta(end, start)  # later/end time comes first!
     return '{h}h {m}m {s}s'.format(h=t_diff.hours, m=t_diff.minutes, s=t_diff.seconds)
 
-DEBUG = False
 def create_callbacks(
     training_model,
     prediction_model,
@@ -30,6 +29,7 @@ def create_callbacks(
     snapshots_path,
     config
 ):
+
     callbacks = []
 
     tensorboard_callback = None
@@ -62,19 +62,20 @@ def create_callbacks(
         prefix=val_prefix
     )
     callbacks.append(evaluation)
-    evaluation2 = Evaluate(
-        evaluation_generator,
-        prediction_model,
-        iou_threshold=0.1,
-        score_threshold=0.05,
-        max_detections=100,
-        save_path=None,
-        weighted_average=False,
-        verbose=1,
-        tensorboard=tensorboard_callback,
-        prefix='train_'
-    )
-    callbacks.append(evaluation2)
+    if 'train_evaluation' in config and config['train_evaluation']==True:
+        evaluation2 = Evaluate(
+            evaluation_generator,
+            prediction_model,
+            iou_threshold=0.1,
+            score_threshold=0.05,
+            max_detections=100,
+            save_path=None,
+            weighted_average=False,
+            verbose=1,
+            tensorboard=tensorboard_callback,
+            prefix='train_'
+        )
+        callbacks.append(evaluation2)
     #h save the model
     # ensure directory created first; otherwise h5py will error after epoch.
     os.makedirs(snapshots_path, exist_ok=True)
