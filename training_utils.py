@@ -152,14 +152,17 @@ def load_efficient_det(
                 visual_effect=visual_effect,
                 **common_args
             )
-    evaluation_generator = CSVGenerator(
-                evaluation_path,
-                LOCAL_CLASSES_PATH,
-                batch_size=config['batch_size'],        
-                misc_effect=misc_effect,
-                visual_effect=visual_effect,
-                **common_args
-            )
+    if config['train_evaluation']:
+        evaluation_generator = CSVGenerator(
+                    evaluation_path,
+                    LOCAL_CLASSES_PATH,
+                    batch_size=config['batch_size'],        
+                    misc_effect=misc_effect,
+                    visual_effect=visual_effect,
+                    **common_args
+                )
+    else:
+        evaluation_generator = None
     if config['validation']:
         validation_generator = CSVGenerator(
                     LOCAL_VALIDATIONS_PATH,
