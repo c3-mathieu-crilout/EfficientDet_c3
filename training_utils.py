@@ -48,7 +48,7 @@ def create_callbacks(
         callbacks.append(tensorboard_callback)
     
     from eval.pascal import Evaluate
-    val_prefix = 'val_
+    val_prefix = 'val_'
     evaluation = Evaluate(
         validation_generator,
         prediction_model,
