@@ -103,7 +103,7 @@ def create_callbacks(
     ))
 
     early_stopping_callback = tf.keras.callbacks.EarlyStopping(
-        monitor=val_prefix+'mAP', min_delta=0, patience=10, verbose=0,
+        monitor=val_prefix+'mAP', min_delta=0, patience=7, verbose=0,
         mode='max', baseline=None, restore_best_weights=False
     )
     callbacks.append(early_stopping_callback)
