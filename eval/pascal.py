@@ -60,6 +60,7 @@ class Evaluate(keras.callbacks.Callback):
         self.weighted_average = weighted_average
         self.verbose = verbose
         self.active_model = model
+        self.prefix = prefix
 
         super(Evaluate, self).__init__()
 
@@ -95,12 +96,12 @@ class Evaluate(keras.callbacks.Callback):
                 summary = tf.Summary()
                 summary_value = summary.value.add()
                 summary_value.simple_value = self.mean_ap
-                summary_value.tag = prefix + "mAP"
+                summary_value.tag = self.prefix + "mAP"
                 self.tensorboard.writer.add_summary(summary, epoch)
             else:
-                tf.summary.scalar(prefix + 'mAP', self.mean_ap, epoch)
+                tf.summary.scalar(self.prefix + 'mAP', self.mean_ap, epoch)
 
-        logs[prefix + 'mAP'] = self.mean_ap
+        logs[self.prefix + 'mAP'] = self.mean_ap
 
         if self.verbose == 1:
-            print(prefix + 'mAP: {:.4f}'.format(self.mean_ap))
+            print(self.prefix + 'mAP: {:.4f}'.format(self.mean_ap))
