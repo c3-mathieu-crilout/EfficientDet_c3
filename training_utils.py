@@ -94,7 +94,7 @@ def create_callbacks(
     callbacks.append(tf.keras.callbacks.ReduceLROnPlateau(
         monitor    = 'loss',
         factor     = 0.1,
-        patience   = 3,
+        patience   = 2,
         verbose    = 1,
         mode       = 'auto',
         min_delta  = 0.0001,
@@ -103,7 +103,7 @@ def create_callbacks(
     ))
 
     early_stopping_callback = tf.keras.callbacks.EarlyStopping(
-        monitor=val_prefix+'mAP', min_delta=0.003, patience=3, verbose=0,
+        monitor=val_prefix+'mAP', min_delta=0.003, patience=5, verbose=0,
         mode='max', baseline=None, restore_best_weights=False
     )
     callbacks.append(early_stopping_callback)
