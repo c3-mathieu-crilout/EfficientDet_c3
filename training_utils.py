@@ -277,7 +277,7 @@ def efficientdet_training(
         optimizer=Adam(lr=1e-3),
         loss={
             'regression': smooth_l1(),
-            'classification': focal()
+            'classification': focal(gamma=config['focal_gamma'])
         }
     )
 
