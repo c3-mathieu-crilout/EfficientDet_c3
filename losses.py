@@ -19,51 +19,43 @@ from tensorflow import keras
 import tensorflow as tf
 
 
-def focal(alpha=0.25, gamma=1.5):
-    """
-    Create a functor for computing the focal loss.
-
+def focal(alpha=0.25, gamma=2.0, cutoff=0.5):
+    """ Create a functor for computing the focal loss.
     Args
         alpha: Scale the focal weight with alpha.
         gamma: Take the power of the focal weight with gamma.
-
+        cutoff: Positive prediction cutoff for soft targets
     Returns
         A functor that computes the focal loss using the alpha and gamma.
     """
-
     def _focal(y_true, y_pred):
-        """
-        Compute the focal loss given the target tensor and the predicted tensor.
-
+        """ Compute the focal loss given the target tensor and the predicted tensor.
         As defined in https://arxiv.org/abs/1708.02002
-
         Args
             y_true: Tensor of target data from the generator with shape (B, N, num_classes).
             y_pred: Tensor of predicted data from the network with shape (B, N, num_classes).
-
         Returns
             The focal loss of y_pred w.r.t. y_true.
         """
-        labels = y_true[:, :, :-1]
-        # -1 for ignore, 0 for background, 1 for object
-        anchor_state = y_true[:, :, -1]
+        labels         = y_true[:, :, :-1]
+        anchor_state   = y_true[:, :, -1]  # -1 for ignore, 0 for background, 1 for object
         classification = y_pred
 
         # filter out "ignore" anchors
-        indices = tf.where(keras.backend.not_equal(anchor_state, -1))
-        labels = tf.gather_nd(labels, indices)
-        classification = tf.gather_nd(classification, indices)
+        indices        = tensorflow.where(keras.backend.not_equal(anchor_state, -1))
+        labels         = tensorflow.gather_nd(labels, indices)
+        classification = tensorflow.gather_nd(classification, indices)
 
         # compute the focal loss
         alpha_factor = keras.backend.ones_like(labels) * alpha
-        alpha_factor = tf.where(keras.backend.equal(labels, 1), alpha_factor, 1 - alpha_factor)
-        # (1 - 0.99) ** 2 = 1e-4, (1 - 0.9) ** 2 = 1e-2
-        focal_weight = tf.where(keras.backend.equal(labels, 1), 1 - classification, classification)
+        alpha_factor = tensorflow.where(keras.backend.greater(labels, cutoff), alpha_factor, 1 - alpha_factor)
+        focal_weight = tensorflow.where(keras.backend.greater(labels, cutoff), 1 - classification, classification)
         focal_weight = alpha_factor * focal_weight ** gamma
+
         cls_loss = focal_weight * keras.backend.binary_crossentropy(labels, classification)
 
         # compute the normalizer: the number of positive anchors
-        normalizer = tf.where(keras.backend.equal(anchor_state, 1))
+        normalizer = tensorflow.where(keras.backend.equal(anchor_state, 1))
         normalizer = keras.backend.cast(keras.backend.shape(normalizer)[0], keras.backend.floatx())
         normalizer = keras.backend.maximum(keras.backend.cast_to_floatx(1.0), normalizer)
 
