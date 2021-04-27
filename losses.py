@@ -42,20 +42,20 @@ def focal(alpha=0.25, gamma=2.0, cutoff=0.5):
         classification = y_pred
 
         # filter out "ignore" anchors
-        indices        = tensorflow.where(keras.backend.not_equal(anchor_state, -1))
-        labels         = tensorflow.gather_nd(labels, indices)
-        classification = tensorflow.gather_nd(classification, indices)
+        indices        = tf.where(keras.backend.not_equal(anchor_state, -1))
+        labels         = tf.gather_nd(labels, indices)
+        classification = tf.gather_nd(classification, indices)
 
         # compute the focal loss
         alpha_factor = keras.backend.ones_like(labels) * alpha
-        alpha_factor = tensorflow.where(keras.backend.greater(labels, cutoff), alpha_factor, 1 - alpha_factor)
-        focal_weight = tensorflow.where(keras.backend.greater(labels, cutoff), 1 - classification, classification)
+        alpha_factor = tf.where(keras.backend.greater(labels, cutoff), alpha_factor, 1 - alpha_factor)
+        focal_weight = tf.where(keras.backend.greater(labels, cutoff), 1 - classification, classification)
         focal_weight = alpha_factor * focal_weight ** gamma
 
         cls_loss = focal_weight * keras.backend.binary_crossentropy(labels, classification)
 
         # compute the normalizer: the number of positive anchors
-        normalizer = tensorflow.where(keras.backend.equal(anchor_state, 1))
+        normalizer = tf.where(keras.backend.equal(anchor_state, 1))
         normalizer = keras.backend.cast(keras.backend.shape(normalizer)[0], keras.backend.floatx())
         normalizer = keras.backend.maximum(keras.backend.cast_to_floatx(1.0), normalizer)
 
