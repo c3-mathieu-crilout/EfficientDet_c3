@@ -67,12 +67,13 @@ def train(config):
     print('End of training.')
 ```     
       
-LOCAL_ANNOTATIONS_PATH being the path of the train annotations (following the structure from the original repo).
-LOCAL_ROOT_PATH being the directory path of your experiment.
-LOCAL_CLASSES_PATH being the path of your description classes (following the structure from the original repo).
-LOCAL_VALIDATIONS_PATH being the path of the val annotations.
-LOCAL_LOGS_PATH being the directory path where to logs everything useful.
-LOCAL_SNAPSHOTS_PATH being the directory path where to save model snapshots.
+LOCAL_ANNOTATIONS_PATH being the path of the train annotations (following the structure from the original repo).   
+LOCAL_ROOT_PATH being the directory path of your experiment.   
+LOCAL_CLASSES_PATH being the path of your description classes (following the structure from the original repo).   
+LOCAL_VALIDATIONS_PATH being the path of the val annotations.   
+LOCAL_LOGS_PATH being the directory path where to logs everything useful.   
+LOCAL_SNAPSHOTS_PATH being the directory path where to save model snapshots.   
+
 ## An example of a valid config
 ```YAML
 architecture: efficientdet # field used as comment
