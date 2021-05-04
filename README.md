@@ -74,7 +74,7 @@ LOCAL_VALIDATIONS_PATH being the path of the val annotations.
 LOCAL_LOGS_PATH being the directory path where to logs everything useful.   
 LOCAL_SNAPSHOTS_PATH being the directory path where to save model snapshots.   
 
-## An example of a valid config
+## An example of a valid config used by the method efficientdet_training
 ```YAML
 architecture: efficientdet # field used as comment
 experiment_name: augmented_pool3_phi3_focal_1 # field used as comment
@@ -99,3 +99,49 @@ train_evaluation: False # compute map for subtrain (can take some time).
 focal_gamma: 3
 ```
 We hope that it is self explanatory.
+
+## An example of how to wrap the train method defined above :
+```python 
+import pprint
+import yaml
+config = yaml.safe_load() # COMPLETE WITH YOUR CONFIG
+# Experiment
+architecture: efficientdet
+experiment_name: augmented_pool3_phi3_focal_1
+dataset_name: pool3 #_augmented
+# Training
+nb_epoch: 100
+batch_size: 2
+detect_text: False # useless
+detect_quadrangle: False # useless
+phi: 3 # selects corresponding backbone BE CARFUL IT AUGMENTS THE NEEDED RAM
+weighted_bifpn: True # bi directionnal featured pyramid network
+freeze_bn: False # batchnorm freeze
+freeze_backbone: False
+snapshot: imagenet # imagenet or a loading path or None
+validation: True
+gpu: '0' # format : device_name:gpu1,gpu2
+random_transform: False
+workers: 7
+multiprocessing: True
+max_queue_size: 10
+train_evaluation: False
+focal_gamma: 3
+""")
+
+LOCAL_ROOT_PATH = f"/home/c3/jupyter_root_dir/data/detection/experiments/{config['architecture']}/{config['experiment_name']}"
+assert os.path.exists(LOCAL_ROOT_PATH) == False, 'Experiment name already used!'
+
+pp = pprint.PrettyPrinter(indent=4)
+pp.pprint(config)
+
+try:
+    train(config)
+except Exception as e:
+    print(e)
+    remote_path = os.path.join(
+        REMOTE_EXPERIMENT_PATH,
+        os.path.basename(LOCAL_ROOT_PATH)
+    )
+    c3.Client.uploadLocalClientFiles(localPath=LOCAL_ROOT_PATH, dstUrlOrEncodedPath=remote_path)
+```
