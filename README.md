@@ -105,29 +105,6 @@ We hope that it is self explanatory.
 import pprint
 import yaml
 config = yaml.safe_load() # COMPLETE WITH YOUR CONFIG
-# Experiment
-architecture: efficientdet
-experiment_name: augmented_pool3_phi3_focal_1
-dataset_name: pool3 #_augmented
-# Training
-nb_epoch: 100
-batch_size: 2
-detect_text: False # useless
-detect_quadrangle: False # useless
-phi: 3 # selects corresponding backbone BE CARFUL IT AUGMENTS THE NEEDED RAM
-weighted_bifpn: True # bi directionnal featured pyramid network
-freeze_bn: False # batchnorm freeze
-freeze_backbone: False
-snapshot: imagenet # imagenet or a loading path or None
-validation: True
-gpu: '0' # format : device_name:gpu1,gpu2
-random_transform: False
-workers: 7
-multiprocessing: True
-max_queue_size: 10
-train_evaluation: False
-focal_gamma: 3
-""")
 
 LOCAL_ROOT_PATH = f"/home/c3/jupyter_root_dir/data/detection/experiments/{config['architecture']}/{config['experiment_name']}"
 assert os.path.exists(LOCAL_ROOT_PATH) == False, 'Experiment name already used!'
