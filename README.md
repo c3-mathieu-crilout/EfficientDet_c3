@@ -3,9 +3,8 @@ This is an implementation of [EfficientDet](https://arxiv.org/pdf/1911.09070.pdf
 The project is based on the official implementation [google/automl](https://github.com/google/automl), [fizyr/keras-retinanet](https://github.com/fizyr/keras-retinanet)
 and the [qubvel/efficientnet](https://github.com/qubvel/efficientnet). 
 
-# How it works - Just use the following function in your jupyter notebook (training_utils being a module of this repo you need to be at the root_path)
-`
-def train(config):
+## How it works - Just use the following function in your jupyter notebook (training_utils being a module of this repo you need to be at the root_path)
+` def train(config):
     
     from training_utils import create_callbacks, efficientdet_training
 
@@ -42,8 +41,8 @@ def train(config):
     )
 
     c3.Client.uploadLocalClientFiles(localPath=LOCAL_ROOT_PATH, dstUrlOrEncodedPath=REMOTE_EXPERIMENT_PATH)
-    print('End of training.')
-`
+    print('End of training.')`   
+   
 LOCAL_ANNOTATIONS_PATH being the path of the train annotations (following the structure from the original repo).
 LOCAL_ROOT_PATH being the directory path of your experiment.
 LOCAL_CLASSES_PATH being the path of your description classes (following the structure from the original repo).
