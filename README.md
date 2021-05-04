@@ -3,7 +3,8 @@ This is an implementation of [EfficientDet](https://arxiv.org/pdf/1911.09070.pdf
 The project is based on the official implementation [google/automl](https://github.com/google/automl), [fizyr/keras-retinanet](https://github.com/fizyr/keras-retinanet)
 and the [qubvel/efficientnet](https://github.com/qubvel/efficientnet). 
 
-## How it works - Just use the following function in your jupyter notebook (training_utils being a module of this repo you need to be at the root_path)
+## How it works - Just use the following function in your jupyter notebook
+Warning : training_utils being a module of this repo you need to be at the root_path or use sys.path.insert(0, root_path)
 ` def train(config):
     
     from training_utils import create_callbacks, efficientdet_training
