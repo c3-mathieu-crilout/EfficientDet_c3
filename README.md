@@ -7,6 +7,26 @@ and the [qubvel/efficientnet](https://github.com/qubvel/efficientnet).
 Warning : training_utils being a module of this repo you need to be at the root_path or use sys.path.insert(0, root_path).  
 
 ```python  
+import sys
+sys.path.insert(0, '/home/c3/jupyter_root_dir/Mathieu/EfficientDet')
+
+# confirm TensorFlow sees the GPU
+assert 'GPU' in str(device_lib.list_local_devices())
+
+# confirm TensorFlow is built with cuda
+assert tf.test.is_built_with_cuda()
+
+# confirm Keras sees the GPU (for TensorFlow 1.X + Keras)
+print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('XLA_GPU')))
+
+# confirm Keras sees the GPU (for TensorFlow 1.X + Keras)
+assert len(keras.backend.tensorflow_backend._get_available_gpus()) > 0
+
+REMOTE_EXPERIMENT_PATH = 'azure://predev-shellair/fs/air/prime/c3_built_datasets/results/test_backup' # CHANGE THIS ACCORDINGLY
+# Local Paths
+LOCAL_PATH = '/home/c3/jupyter_root_dir/data/detection/' # CHANGE THIS ACCORDINGLY
+LOCAL_DATASETS_PATH = os.path.join(LOCAL_PATH, 'models')
+
 def train(config):
     
     from training_utils import create_callbacks, efficientdet_training
