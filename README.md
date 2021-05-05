@@ -20,10 +20,12 @@ and the [qubvel/efficientnet](https://github.com/qubvel/efficientnet).
 │   ├── classes.csv
 │   ├── train_val.csv
 │   ├── test.csv
-|   └── logs
-|       ├── config.yaml (saved config)
-|       ├── stdout.txt (training logs)
-|       └── events.out.tfevents.XXXX.jupyter (tensorboard logs)
+|   |── logs
+|   |   ├── config.yaml (saved config)
+|   |   ├── stdout.txt (training logs)
+|   |   └── events.out.tfevents.XXXX.jupyter (tensorboard logs)
+|   └── snapshots
+|       └── 0_0.h5 (snapshot saved)
 └── ...
 ```
 
@@ -147,3 +149,7 @@ except Exception as e:
     )
     c3.Client.uploadLocalClientFiles(localPath=LOCAL_ROOT_PATH, dstUrlOrEncodedPath=remote_path)
 ```
+
+## Logs
+You can find in stdout.txt file all the logs of the experiment, mAP computed at each epoch for each class.
+It also save tensorboard logs, and snaphot of the model, keeping the best model according to test mAP evaluation.
