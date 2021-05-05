@@ -96,7 +96,7 @@ random_transform: False # apply various online random transformation
 workers: 7
 multiprocessing: True
 max_queue_size: 10
-train_evaluation: False # compute map for subtrain (can take some time).
+train_evaluation: False # compute mAP for subtrain (can take some time).
 focal_gamma: 3
 ```
 We hope that it is self explanatory.
