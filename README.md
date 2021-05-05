@@ -29,13 +29,13 @@ and the [qubvel/efficientnet](https://github.com/qubvel/efficientnet).
 └── ...
 ```
 
-## How it works - Just use the following function in your jupyter notebook
+## How it works - Just use the following function in your jupyter notebook and adapt it to your needs
 Warning : training_utils being a module of this repo you need to be at the root_path or use sys.path.insert(0, root_path).  
 Dependencies are written in requirements.txt, you can also use py-air-efficientdet kernel.  
 
 ```python  
 import sys
-sys.path.insert(0, '/home/c3/jupyter_root_dir/Mathieu/EfficientDet')
+sys.path.insert(0, '/home/c3/jupyter_root_dir/Mathieu/EfficientDet') # CHANGE THIS ACCORDINGLY
 
 # confirm TensorFlow sees the GPU
 assert 'GPU' in str(device_lib.list_local_devices())
@@ -73,7 +73,6 @@ def train(config):
         target_file_path = f'{LOCAL_ROOT_PATH}/{filename}'    
         if os.path.exists(source_file_path):
             shutil.copy(source_file_path, target_file_path)
-            # TODO TO REMOVE
         else:
             print(
                 f"WARNING: Source file path {source_file_path} does not exist!"
@@ -117,7 +116,7 @@ freeze_bn: False # freeze batchnorm
 freeze_backbone: False
 snapshot: imagenet # imagenet or a loading path or None
 validation: True # computation validation or not
-gpu: '0' # format : device_name:gpu1,gpu2
+gpu: '0' # format : device_name:gpu1,gpu2 # WARNING multi gpus is not working
 random_transform: False # apply various online random transformation
 workers: 7
 multiprocessing: True
