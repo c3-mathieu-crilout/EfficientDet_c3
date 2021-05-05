@@ -3,6 +3,30 @@ This is an implementation of [EfficientDet](https://arxiv.org/pdf/1911.09070.pdf
 The project is based on the official implementation [google/automl](https://github.com/google/automl), [fizyr/keras-retinanet](https://github.com/fizyr/keras-retinanet)
 and the [qubvel/efficientnet](https://github.com/qubvel/efficientnet). 
 
+## The project observed the following structure
+```
+.
+├── EfficientDet (repo)
+├── EfficientDet_Notebook.ipynb
+├── Local_Path (datasets)
+│   ├── Images
+│   │   └── img.png
+│   └── models
+│       └── dataset1
+|           ├── classes.csv
+|           ├── train_val.csv
+|           └── test.csv
+├── LOCAL_ROOT_PATH (path of an experiment)                    
+│   ├── classes.csv
+│   ├── train_val.csv
+│   ├── test.csv
+|   └── logs
+|       ├── config.yaml (saved config)
+|       ├── stdout.txt (training logs)
+|       └── events.out.tfevents.XXXX.jupyter (tensorboard logs)
+└── ...
+```
+
 ## How it works - Just use the following function in your jupyter notebook
 Warning : training_utils being a module of this repo you need to be at the root_path or use sys.path.insert(0, root_path).  
 Dependencies are written in requirements.txt, you can also use py-air-efficientdet kernel.  
