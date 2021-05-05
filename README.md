@@ -3,7 +3,7 @@ This is an implementation of [EfficientDet](https://arxiv.org/pdf/1911.09070.pdf
 The project is based on the official implementation [google/automl](https://github.com/google/automl), [fizyr/keras-retinanet](https://github.com/fizyr/keras-retinanet)
 and the [qubvel/efficientnet](https://github.com/qubvel/efficientnet). 
 
-## The project observed the following structure
+## The project observes the following structure
 ```
 .
 ├── EfficientDet (repo)
