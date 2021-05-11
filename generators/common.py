@@ -156,7 +156,7 @@ class Generator(keras.utils.Sequence):
                 (annotations['bboxes'][:, 3] > image.shape[0])
             )[0]
 
-            if False and len(invalid_indices):
+            if len(invalid_indices):
                 warnings.warn('Image with id {} (shape {}) contains the following invalid boxes: {}.'.format(
                     group[index],
                     image.shape,
@@ -196,7 +196,7 @@ class Generator(keras.utils.Sequence):
             )[0]
 
             # delete invalid indices
-            if False and len(small_indices):
+            if len(small_indices):
                 for k in annotations_group[index].keys():
                     if k not in ['quadrangles']:
                         annotations_group[index][k] = np.delete(annotations[k], small_indices, axis=0)
