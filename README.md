@@ -1,54 +1,154 @@
-# EfficientDet
+# EfficientDet (fork from https://github.com/xuannianz/EfficientDet)
 This is an implementation of [EfficientDet](https://arxiv.org/pdf/1911.09070.pdf) for object detection on Keras and Tensorflow. 
 The project is based on the official implementation [google/automl](https://github.com/google/automl), [fizyr/keras-retinanet](https://github.com/fizyr/keras-retinanet)
 and the [qubvel/efficientnet](https://github.com/qubvel/efficientnet). 
 
-## About pretrained weights
-* The pretrained EfficientNet weights on imagenet are downloaded from [Callidior/keras-applications/releases](https://github.com/Callidior/keras-applications/releases)
-* The pretrained EfficientDet weights on coco are converted from the official release [google/automl](https://github.com/google/automl).
+## The project observes the following structure
+```
+.
+├── EfficientDet (repo)
+├── EfficientDet_Notebook.ipynb
+├── Local_Path (datasets)
+│   ├── Images
+│   │   └── img.png
+│   └── models
+│       └── dataset1
+|           ├── classes.csv
+|           ├── train_val.csv
+|           └── test.csv
+├── LOCAL_ROOT_PATH (path of an experiment)                    
+│   ├── classes.csv
+│   ├── train_val.csv
+│   ├── test.csv
+|   |── logs
+|   |   ├── config.yaml (saved config)
+|   |   ├── stdout.txt (training logs)
+|   |   └── events.out.tfevents.XXXX.jupyter (tensorboard logs)
+|   └── snapshots
+|       └── 0_0.h5 (snapshot saved)
+└── ...
+```
 
-Thanks for their hard work.
-This project is released under the Apache License. Please take their licenses into consideration too when use this project.
+## How it works - Just use the following function in your jupyter notebook and adapt it to your needs
+Warning : training_utils being a module of this repo you need to be at the root_path or use sys.path.insert(0, root_path).  
+Dependencies are written in requirements.txt, you can also use py-air-efficientdet kernel.  
 
-**Updates**
-- [03/21/2020] Synchronize with the official implementation. [google/automl](https://github.com/google/automl)
-- [03/05/2020] Anchor free version. The accuracy is a little lower, but it's faster and smaller.For details, please refer to [xuannianz/SAPD](https://github.com/xuannianz/SAPD)
-- [02/20/2020] Support quadrangle detection. For details, please refer to [README_quad](README_quad.md)
+```python  
+import sys
+sys.path.insert(0, '/home/c3/jupyter_root_dir/Mathieu/EfficientDet') # CHANGE THIS ACCORDINGLY
 
-## Train
-### build dataset 
-1. Pascal VOC 
-    * Download VOC2007 and VOC2012, copy all image files from VOC2007 to VOC2012.
-    * Append VOC2007 train.txt to VOC2012 trainval.txt.
-    * Overwrite VOC2012 val.txt by VOC2007 val.txt.
-2. MSCOCO 2017
-    * Download images and annotations of coco 2017
-    * Copy all images into datasets/coco/images, all annotations into datasets/coco/annotations
-3. Other types please refer to [fizyr/keras-retinanet](https://github.com/fizyr/keras-retinanet))
-### train
-* STEP1: `python3 train.py --snapshot imagenet --phi {0, 1, 2, 3, 4, 5, 6} --gpu 0 --random-transform --compute-val-loss --freeze-backbone --batch-size 32 --steps 1000 pascal|coco datasets/VOC2012|datasets/coco` to start training. The init lr is 1e-3.
-* STEP2: `python3 train.py --snapshot xxx.h5 --phi {0, 1, 2, 3, 4, 5, 6} --gpu 0 --random-transform --compute-val-loss --freeze-bn --batch-size 4 --steps 10000 pascal|coco datasets/VOC2012|datasets/coco` to start training when val mAP can not increase during STEP1. The init lr is 1e-4 and decays to 1e-5 when val mAP keeps dropping down.
-## Evaluate
-1. PASCAL VOC
-    * `python3 eval/common.py` to evaluate pascal model by specifying model path there.
-    * The best evaluation results (score_threshold=0.01, mAP<sub>50</sub>) on VOC2007 test are: 
+# confirm TensorFlow sees the GPU
+assert 'GPU' in str(device_lib.list_local_devices())
 
-    | phi | 0 | 1 |
-    | ---- | ---- | ---- |
-    | w/o weighted |  | [0.8029](https://drive.google.com/open?id=1-QkMq56w4dZOTQUnbitF53NKEiNF9F_Q) |
-    | w/ weighted | [0.7892](https://drive.google.com/open?id=1mrqL9rFoYW-4Jc57MsTipkvOTRy_EGfe) |  |
-2. MSCOCO
-    * `python3 eval/coco.py` to evaluate coco model by specifying model path there.
+# confirm TensorFlow is built with cuda
+assert tf.test.is_built_with_cuda()
+
+# confirm Keras sees the GPU (for TensorFlow 1.X + Keras)
+print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('XLA_GPU')))
+
+# confirm Keras sees the GPU (for TensorFlow 1.X + Keras)
+assert len(keras.backend.tensorflow_backend._get_available_gpus()) > 0
+
+REMOTE_EXPERIMENT_PATH = 'azure://predev-shellair/fs/air/prime/c3_built_datasets/results/test_backup' # CHANGE THIS ACCORDINGLY
+# Local Paths
+LOCAL_PATH = '/home/c3/jupyter_root_dir/data/detection/' # CHANGE THIS ACCORDINGLY
+LOCAL_DATASETS_PATH = os.path.join(LOCAL_PATH, 'models')
+
+def train(config):
     
-    | phi | mAP |
-    | ---- | ---- |
-    | 0 | 0.334 [weights](https://drive.google.com/open?id=1MNB5q6rJ4TK_gen3iriu8-ArG9jB8aR9), [results](https://drive.google.com/open?id=1U4Bdk4C7aNF7l4mvhh2Oi8mFpttEwB8s) |
-    | 1 | 0.393 [weights](https://drive.google.com/open?id=11pQznCTi4MaVXqkJmCMcQhphMXurpx5Z), [results](https://drive.google.com/open?id=1NjGr3yG3_Rk1xVCk4sgVelTZNNz_E2vp) |
-    | 2 | 0.424 [weights](https://drive.google.com/open?id=1_yXrOrY0FDnH-d_FQIPbGy4z2ax4aNh8), [results](https://drive.google.com/open?id=1UQP8kDj7tXHC2bs--Aq8x7w7FkVX4xJD) |
-    | 3 | 0.454 [weights](https://drive.google.com/open?id=1VnxoBpEQmm0Z2uO3gjhYDeu-rNirba6c), [results](https://drive.google.com/open?id=1uruTEMPhl_JvbA_T9kCdutzeOR3gFX4g) |
-    | 4 | 0.483 [weights](https://drive.google.com/open?id=1lQvTpnO_mfkHCRpcP28dxU4CWyK3xUzj), [results](https://drive.google.com/open?id=1s4nmgYaPqjbAgDlRF1AVVz6uWKDz7O_i) |
-    
-## Test
-`python3 inference.py` to test your image by specifying image path and model path there. 
+    from training_utils import create_callbacks, efficientdet_training
 
-![image1](test/demo.jpg) 
+    # Local paths
+    LOCAL_CLASSES_PATH = f'{LOCAL_ROOT_PATH}/classes.csv'
+    LOCAL_ANNOTATIONS_PATH = f'{LOCAL_ROOT_PATH}/train_val.csv'
+    LOCAL_VALIDATIONS_PATH = f'{LOCAL_ROOT_PATH}/test.csv'
+    LOCAL_SNAPSHOTS_PATH = f'{LOCAL_ROOT_PATH}/snapshots'
+    LOCAL_LOGS_PATH = f'{LOCAL_ROOT_PATH}/logs'
+
+    # copy dataset metadata files
+    DATASETS_PATH = f"{LOCAL_DATASETS_PATH}/{config['dataset_name']}"
+    os.makedirs(LOCAL_ROOT_PATH, exist_ok=True)
+    for filename in ('test.csv','test2.csv','train_val.csv','classes.csv','classes_count.csv'):
+        source_file_path = f'{DATASETS_PATH}/{filename}'
+        target_file_path = f'{LOCAL_ROOT_PATH}/{filename}'    
+        if os.path.exists(source_file_path):
+            shutil.copy(source_file_path, target_file_path)
+        else:
+            print(
+                f"WARNING: Source file path {source_file_path} does not exist!"
+            )
+            
+    print(LOCAL_ROOT_PATH)
+    model = efficientdet_training(
+        config,
+        LOCAL_ANNOTATIONS_PATH,
+        LOCAL_ROOT_PATH,
+        LOCAL_CLASSES_PATH,
+        LOCAL_VALIDATIONS_PATH,
+        LOCAL_LOGS_PATH,
+        LOCAL_SNAPSHOTS_PATH
+    )
+
+    c3.Client.uploadLocalClientFiles(localPath=LOCAL_ROOT_PATH, dstUrlOrEncodedPath=REMOTE_EXPERIMENT_PATH)
+    print('End of training.')
+```     
+      
+LOCAL_ANNOTATIONS_PATH being the path of the train annotations (following the structure from the original repo).   
+LOCAL_ROOT_PATH being the directory path of your experiment.   
+LOCAL_CLASSES_PATH being the path of your description classes (following the structure from the original repo).   
+LOCAL_VALIDATIONS_PATH being the path of the val annotations.   
+LOCAL_LOGS_PATH being the directory path where to logs everything useful.   
+LOCAL_SNAPSHOTS_PATH being the directory path where to save model snapshots.   
+
+## An example of a valid config used by the method efficientdet_training
+```YAML
+architecture: efficientdet # field used as comment
+experiment_name: augmented_pool3_phi3_focal_1 # field used as comment
+dataset_name: pool3 # used to retrieve corresponding dataset (see function above)
+# Training
+nb_epoch: 100
+batch_size: 2
+detect_text: False # useless
+detect_quadrangle: False # useless
+phi: 3 # selects corresponding backbone BE CARFUL IT AUGMENTS THE NEEDED RAM
+weighted_bifpn: True # bi directionnal featured pyramidal network
+freeze_bn: False # freeze batchnorm
+freeze_backbone: False
+snapshot: imagenet # imagenet or a loading path or None
+validation: True # computation validation or not
+gpu: '0' # format : device_name:gpu1,gpu2 # WARNING multi gpus is not working
+random_transform: False # apply various online random transformation
+workers: 7
+multiprocessing: True
+max_queue_size: 10
+train_evaluation: False # compute mAP for subtrain (can take some time).
+focal_gamma: 3
+```
+We hope that it is self explanatory.
+
+## An example of how to wrap the train method defined above :
+```python 
+import pprint
+import yaml
+config = yaml.safe_load() # COMPLETE WITH YOUR CONFIG
+
+LOCAL_ROOT_PATH = f"/home/c3/jupyter_root_dir/data/detection/experiments/{config['architecture']}/{config['experiment_name']}"
+assert os.path.exists(LOCAL_ROOT_PATH) == False, 'Experiment name already used!'
+
+pp = pprint.PrettyPrinter(indent=4)
+pp.pprint(config)
+
+try:
+    train(config)
+except Exception as e:
+    print(e)
+    remote_path = os.path.join(
+        REMOTE_EXPERIMENT_PATH,
+        os.path.basename(LOCAL_ROOT_PATH)
+    )
+    c3.Client.uploadLocalClientFiles(localPath=LOCAL_ROOT_PATH, dstUrlOrEncodedPath=remote_path)
+```
+
+## Logs
+You can find in stdout.txt file all the logs of the experiment, mAP computed at each epoch for each class.
+It also save tensorboard logs, and snaphot of the model, keeping the best model according to test mAP evaluation.
